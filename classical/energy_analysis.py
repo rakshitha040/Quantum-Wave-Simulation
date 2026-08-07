@@ -18,6 +18,7 @@ C = 1.0  # wave speed
 NX = 401  # spatial grid points, including both boundaries
 CFL = 0.5  # Courant number c*dt/dx, must satisfy CFL <= 1
 T_FINAL = 4.0  # total simulation time (two periods of the fundamental mode)
+TABLE_TIMES = np.arange(0.0, T_FINAL + 1e-9, 0.5)  # rows for the per-IC energy tables
 
 
 # Initial conditions
@@ -103,6 +104,21 @@ def relative_energy_error(total: np.ndarray) -> np.ndarray:
     return (total - total[0]) / total[0]
 
 
+def sample_energy_at_times(
+    t: np.ndarray,
+    kinetic: np.ndarray,
+    potential: np.ndarray,
+    total: np.ndarray,
+    sample_times: np.ndarray,
+) -> list[tuple[float, float, float, float]]:
+    """Nearest-index snapshots of (time, kinetic, potential, total) at each sample time."""
+    rows = []
+    for sample_time in sample_times:
+        idx = int(np.argmin(np.abs(t - sample_time)))
+        rows.append((t[idx], kinetic[idx], potential[idx], total[idx]))
+    return rows
+
+
 # Plotting
 def _style_axes(ax: plt.Axes, ylabel: str, title: str) -> None:
     """Apply shared axis formatting."""
@@ -139,6 +155,26 @@ def plot_combined_energy(
     ax.plot(t, total, label="Total", color="#1f4e8c", linewidth=1.6)
     _style_axes(ax, "Energy", title)
     ax.legend(frameon=False)
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_energy_table(name: str, rows: list[tuple[float, float, float, float]]) -> None:
+    """Draw a Time / Kinetic / Potential / Total energy table for one initial condition."""
+    col_labels = ["Time", "Kinetic Energy", "Potential Energy", "Total Energy"]
+    cell_text = [[f"{time:.3f}", f"{k:.6f}", f"{p:.6f}", f"{e:.6f}"] for time, k, p, e in rows]
+
+    fig, ax = plt.subplots(figsize=(7, 1.0 + 0.4 * len(rows)), dpi=150)
+    ax.axis("off")
+    table = ax.table(cellText=cell_text, colLabels=col_labels, cellLoc="center", loc="center")
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.auto_set_column_width(col=list(range(len(col_labels))))
+    table.scale(1, 1.5)
+    for col in range(len(col_labels)):
+        table[0, col].set_text_props(weight="bold")
+
+    ax.set_title(f"Energy vs Time -- {name}", pad=14)
     fig.tight_layout()
     plt.show()
 
@@ -217,6 +253,9 @@ def analyze(name: str, ic_func) -> None:
     plot_combined_energy(
         t, kinetic, potential, total, f"Energy Conservation Analysis -- {name}"
     )
+
+    table_rows = sample_energy_at_times(t, kinetic, potential, total, TABLE_TIMES)
+    plot_energy_table(name, table_rows)
 
 
 def main() -> None:
