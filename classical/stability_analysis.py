@@ -8,7 +8,6 @@ conditions, to verify the CFL stability limit r = c*dt/dx <= 1.
 """
 
 # Imports
-import os
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -105,15 +104,7 @@ def _style_axes(ax: plt.Axes, xlabel: str, ylabel: str, title: str) -> None:
     ax.spines["right"].set_visible(False)
 
 
-def save_figure(fig: plt.Figure, save_path: str) -> None:
-    """Create the output directory and save the figure."""
-    os.makedirs(os.path.dirname(save_path), exist_ok=True)
-    fig.tight_layout()
-    fig.savefig(save_path, dpi=300)
-    plt.close(fig)
-
-
-def plot_stability_profiles(results: list, title: str, save_path: str) -> None:
+def plot_stability_profiles(results: list, title: str) -> None:
     """Final-time wave profile for each CFL number, one subplot each."""
     fig, axes = plt.subplots(2, 2, figsize=(10, 7), dpi=150)
     for ax, result in zip(axes.flat, results):
@@ -121,10 +112,11 @@ def plot_stability_profiles(results: list, title: str, save_path: str) -> None:
         subtitle = f"CFL = {result['cfl']} ({result['status']})"
         _style_axes(ax, "x", "u(x, T_final)", subtitle)
     fig.suptitle(title)
-    save_figure(fig, save_path)
+    fig.tight_layout()
+    plt.show()
 
 
-def plot_amplitude_vs_time(results: list, title: str, save_path: str) -> None:
+def plot_amplitude_vs_time(results: list, title: str) -> None:
     """Maximum amplitude vs time for all CFL numbers, on one graph."""
     fig, ax = plt.subplots(figsize=(7, 4.5), dpi=150)
     colors = ["#2ca02c", "#1f77b4", "#ff7f0e", "#d62728"]
@@ -141,10 +133,11 @@ def plot_amplitude_vs_time(results: list, title: str, save_path: str) -> None:
     ax.set_yscale("log")
     _style_axes(ax, "Time", "Max |u(x, t)|  (log scale)", title)
     ax.legend(frameon=False)
-    save_figure(fig, save_path)
+    fig.tight_layout()
+    plt.show()
 
 
-def plot_stability_table(results: list, title: str, save_path: str) -> None:
+def plot_stability_table(results: list, title: str) -> None:
     """Table of CFL, stability status, and maximum amplitude."""
     col_labels = ["CFL", "Stability", "Maximum Amplitude"]
     cell_text = [[f"{r['cfl']}", r["status"], f"{r['peak_amplitude']:.6e}"] for r in results]
@@ -160,7 +153,8 @@ def plot_stability_table(results: list, title: str, save_path: str) -> None:
         table[0, col].set_text_props(weight="bold")
 
     ax.set_title(title, pad=14)
-    save_figure(fig, save_path)
+    fig.tight_layout()
+    plt.show()
 
 
 # Reporting
@@ -181,28 +175,21 @@ def print_interpretation() -> None:
 
 
 # Main
-def analyze_ic(name: str, folder: str, ic_func) -> list:
-    """Run the CFL sweep for one initial condition and save its figures."""
+def analyze_ic(name: str, ic_func) -> list:
+    """Run the CFL sweep for one initial condition and display its figures."""
     results = [run_cfl_case(ic_func, cfl) for cfl in CFL_VALUES]
-    base = f"results/{folder}/stability"
 
-    plot_stability_profiles(
-        results, f"Stability Profiles -- {name}", f"{base}/stability_profiles.png"
-    )
-    plot_amplitude_vs_time(
-        results, f"Maximum Amplitude vs Time -- {name}", f"{base}/amplitude_vs_time.png"
-    )
-    plot_stability_table(
-        results, f"CFL Stability Summary -- {name}", f"{base}/stability_table.png"
-    )
+    plot_stability_profiles(results, f"Stability Profiles -- {name}")
+    plot_amplitude_vs_time(results, f"Maximum Amplitude vs Time -- {name}")
+    plot_stability_table(results, f"CFL Stability Summary -- {name}")
 
     return results
 
 
 def main() -> None:
     """Run the CFL stability study for both initial conditions."""
-    standing_results = analyze_ic("Standing Wave", "standing_wave", standing_wave_ic)
-    gaussian_results = analyze_ic("Gaussian Pulse", "gaussian_pulse", gaussian_pulse_ic)
+    standing_results = analyze_ic("Standing Wave", standing_wave_ic)
+    gaussian_results = analyze_ic("Gaussian Pulse", gaussian_pulse_ic)
 
     print_stability_section("STANDING WAVE", standing_results)
     print_stability_section("GAUSSIAN PULSE", gaussian_results)
