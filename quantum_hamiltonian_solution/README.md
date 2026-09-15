@@ -104,14 +104,10 @@ The quantum evolution is performed using the Hamiltonian formulation rather than
 ## 5. Repository Structure
 
 quantum_hamiltonian_solution/
-│
 ├── final.py
 ├── plots.py
 ├── output.txt
 ├── README.md
-├── LICENSE
-├── .gitignore
-│
 └── results_quantum/
 
 ### final.py
