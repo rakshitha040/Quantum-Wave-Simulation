@@ -1,0 +1,16 @@
+===== CASE 1: Sine-wave IC (exact closed form) =====
+[Sine BC check] max|u(0,t)| = 0.000e+00   max|u(L,t)| = 1.225e-16   Dirichlet BCs satisfied: True
+[Energy] mean E = 2.467401e+00,  relative drift = 7.199e-16
+[Fourier] dominant mode = 1 (expected m = 1) -- single mode because the IC is itself a Dirichlet eigenfunction.
+
+===== CASE 2: Gaussian-pulse IC (Fourier sine series) =====
+[IC check] max|f(x) - reconstruction at t=0| = 7.794e-14
+[Gaussian BC check] max|u(0,t)| = 0.000e+00   max|u(L,t)| = 6.015e-16   Dirichlet BCs satisfied: True
+[Energy] mean E = 8.862269e+00,  relative drift = 8.018e-16
+[Convergence] building reference solution with 500 modes ...
+[Convergence] N_modes=  10  L2_rel=1.584e-01  RMSE=3.331e-02  max_abs_err=1.147e-01
+[Convergence] N_modes=  20  L2_rel=2.739e-03  RMSE=5.759e-04  max_abs_err=1.608e-03
+[Convergence] N_modes=  50  L2_rel=6.694e-09  RMSE=1.407e-09  max_abs_err=3.179e-09
+[Convergence] N_modes= 100  L2_rel=6.694e-09  RMSE=1.407e-09  max_abs_err=3.179e-09
+[Convergence] N_modes= 200  L2_rel=6.694e-09  RMSE=1.407e-09  max_abs_err=3.179e-09
+[Explanation] The Gaussian is not a single Dirichlet eigenfunction, so it needs a superposition of many sine modes; narrower pulses (smaller sigma) decay more slowly in |A_n| and need more modes.
