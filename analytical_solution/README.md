@@ -162,47 +162,49 @@ The analytical solution also provides an independent reference for evaluating th
 
 The overall research workflow is:
 
-Analytical Solution
-        ↓
-Reference / Benchmark
-        ↓
-       ┌───────────────────────┐
-       ↓                       ↓
-Numerical FDM          Quantum Hamiltonian
-       ↓                       ↓
-       └───────────┬───────────┘
-                   ↓
-          Comparative Analysis
-
-The analytical solution therefore provides a common reference for studying the accuracy of both computational approaches.
-
+```text
+                    Analytical Solution
+                           │
+                           │
+                           ▼
+                  Reference / Benchmark
+                           │
+                 ┌─────────┴─────────┐
+                 │                   │
+                 ▼                   ▼
+          Numerical FDM      Quantum Hamiltonian
+                 │                   │
+                 │                   │
+                 └─────────┬─────────┘
+                           │
+                           ▼
+                  Comparative Analysis
 ---
 
 ## 11. Relation to Other Modules
 
 The analytical solution is part of the larger research repository:
-
 Quantum-Wave-Simulation/
 │
 ├── numerical_solution/
+│   ├── ...
+│   └── results/
 │
 ├── analytical_solution/
+│   ├── final.py
+│   ├── README.md
+│   └── results/
 │
 ├── quantum_hamiltonian_solution/
+│   ├── final.py
+│   ├── plots.py
+│   ├── output.txt
+│   ├── README.md
+│   └── results_quantum/
 │
 ├── README.md
 ├── LICENSE
 └── requirements.txt
-
-The three computational modules have different roles:
-
-| Module | Purpose |
-|---|---|
-| Analytical Solution | Reference / benchmark solution |
-| Numerical Solution | Classical finite difference solution |
-| Quantum Hamiltonian Solution | Quantum Hamiltonian time evolution |
-
-This separation allows each method to be developed and evaluated independently.
 
 ---
 
